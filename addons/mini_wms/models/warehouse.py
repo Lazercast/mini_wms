@@ -68,14 +68,29 @@ class WmsWarehouse(models.Model):
 
     def _compute_product_count(self):
         """
-        Computes the number of distinct products in stock within this warehouse.
-        Once wms.stock.movement is created, it aggregates positive stock.
+        Computes the number of unique active products that currently
+        have positive stock within this warehouse.
         """
         for warehouse in self:
             if "wms.stock.movement" in self.env:
-                movements = self.env["wms.stock.movement"].search([
-                    ("destination_location_id.warehouse_id", "=", warehouse.id),
-                ])
-                warehouse.product_count = len(movements.mapped("product_id"))
+                wh_locations = warehouse.location_ids.ids
+                if not wh_locations:
+                    warehouse.product_count = 0
+                    continue
+
+                products = self.env["wms.product"].search([("active", "=", True)])
+                count = 0
+                for product in products:
+                    in_qty = sum(self.env["wms.stock.movement"].search([
+                        ("product_id", "=", product.id),
+                        ("destination_location_id", "in", wh_locations),
+                    ]).mapped("quantity"))
+                    out_qty = sum(self.env["wms.stock.movement"].search([
+                        ("product_id", "=", product.id),
+                        ("source_location_id", "in", wh_locations),
+                    ]).mapped("quantity"))
+                    if (in_qty - out_qty) > 0:
+                        count += 1
+                warehouse.product_count = count
             else:
                 warehouse.product_count = 0
