@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Stock Transfer List View -->
+    <record id="view_wms_stock_transfer_list" model="ir.ui.view">
+        <field name="name">wms.stock.transfer.list</field>
+        <field name="model">wms.stock.transfer</field>
+        <field name="arch" type="xml">
+            <list string="Internal Transfers"
+                  decoration-info="state == 'confirmed'"
+                  decoration-success="state == 'done'"
+                  decoration-muted="state == 'cancelled'"
+                  sample="1">
+                <field name="name"/>
+                <field name="warehouse_id"/>
+                <field name="source_location_id"/>
+                <field name="destination_location_id"/>
+                <field name="transfer_date"/>
+                <field name="responsible_user_id" widget="many2one_avatar_user"/>
+                <field name="total_quantity" sum="Total Quantity"/>
+                <field name="state" widget="badge"
+                       decoration-info="state == 'confirmed'"
+                       decoration-success="state == 'done'"
+                       decoration-warning="state == 'draft'"
+                       decoration-muted="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Stock Transfer Form View -->
+    <record id="view_wms_stock_transfer_form" model="ir.ui.view">
+        <field name="name">wms.stock.transfer.form</field>
+        <field name="model">wms.stock.transfer</field>
+        <field name="arch" type="xml">
+            <form string="Stock Transfer">
+                <header>
+                    <button name="action_confirm" string="Confirm Transfer" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_done" string="Execute Transfer" type="object"
+                            class="btn-success" invisible="state != 'confirmed'"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state in ('done', 'cancelled')"/>
+                    <button name="action_draft" string="Reset to Draft" type="object"
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,done"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Transfer Reference"/>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Transfer Route">
+                            <field name="warehouse_id" readonly="state in ('done', 'cancelled')"/>
+                            <field name="source_location_id"
+                                   domain="[('warehouse_id', '=', warehouse_id), ('location_type', 'in', ['receiving', 'storage'])]"
+                                   readonly="state in ('done', 'cancelled')"/>
+                            <field name="destination_location_id"
+                                   domain="[('warehouse_id', '=', warehouse_id), ('location_type', 'in', ['storage', 'shipping', 'damaged'])]"
+                                   readonly="state in ('done', 'cancelled')"/>
+                        </group>
+                        <group string="Operational Info">
+                            <field name="transfer_date" readonly="state in ('done', 'cancelled')"/>
+                            <field name="responsible_user_id" readonly="state in ('done', 'cancelled')"/>
+                            <field name="total_quantity" readonly="1" class="fw-bold"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Products to Transfer" name="lines">
+                            <field name="line_ids" readonly="state in ('done', 'cancelled')">
+                                <list editable="bottom">
+                                    <field name="product_id"/>
+                                    <field name="quantity"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Forklift driver instructions, pallet notes..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- Chatter -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Stock Transfer Search View -->
+    <record id="view_wms_stock_transfer_search" model="ir.ui.view">
+        <field name="name">wms.stock.transfer.search</field>
+        <field name="model">wms.stock.transfer</field>
+        <field name="arch" type="xml">
+            <search string="Search Transfers">
+                <field name="name"/>
+                <field name="warehouse_id"/>
+                <field name="source_location_id"/>
+                <field name="destination_location_id"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Confirmed / Ready" name="confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter string="Done" name="done" domain="[('state', '=', 'done')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Warehouse" name="group_warehouse" context="{'group_by': 'warehouse_id'}"/>
+                    <filter string="Source Zone" name="group_source" context="{'group_by': 'source_location_id'}"/>
+                    <filter string="Destination Zone" name="group_destination" context="{'group_by': 'destination_location_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Stock Transfer Action Window -->
+    <record id="action_wms_stock_transfer" model="ir.actions.act_window">
+        <field name="name">Transfers</field>
+        <field name="res_model">wms.stock.transfer</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_wms_stock_transfer_search"/>
+        <field name="context">{'search_default_confirmed': 1, 'search_default_draft': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Organize an internal goods transfer!
+            </p>
+            <p>
+                Move products from receiving docks to storage racks, or stage items to shipping lanes with automatic stock validation.
+            </p>
+        </field>
+    </record>
+</odoo>

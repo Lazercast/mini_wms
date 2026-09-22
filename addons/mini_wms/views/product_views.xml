@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Product List View -->
+    <record id="view_wms_product_list" model="ir.ui.view">
+        <field name="name">wms.product.list</field>
+        <field name="model">wms.product</field>
+        <field name="arch" type="xml">
+            <list string="Products" decoration-danger="is_low_stock" sample="1">
+                <field name="name"/>
+                <field name="sku"/>
+                <field name="barcode"/>
+                <field name="category"/>
+                <field name="stock_quantity" string="On Hand" sum="Total Quantity"/>
+                <field name="unit_of_measure"/>
+                <field name="minimum_stock"/>
+                <field name="is_low_stock" widget="boolean_toggle" string="Low Stock?"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Product Kanban View -->
+    <record id="view_wms_product_kanban" model="ir.ui.view">
+        <field name="name">wms.product.kanban</field>
+        <field name="model">wms.product</field>
+        <field name="arch" type="xml">
+            <kanban sample="1">
+                <field name="name"/>
+                <field name="sku"/>
+                <field name="category"/>
+                <field name="stock_quantity"/>
+                <field name="unit_of_measure"/>
+                <field name="is_low_stock"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <strong class="o_kanban_record_title fs-5"><field name="name"/></strong>
+                            <span t-if="record.is_low_stock.raw_value" class="badge text-bg-danger">Low Stock</span>
+                        </div>
+                        <div class="text-muted small mb-2">
+                            <span>SKU: <field name="sku"/></span> | <span><field name="category"/></span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-baseline">
+                            <span class="text-secondary">On Hand:</span>
+                            <span class="fs-4 fw-bold" t-attf-class="{{ record.is_low_stock.raw_value ? 'text-danger' : 'text-primary' }}">
+                                <field name="stock_quantity"/> <field name="unit_of_measure"/>
+                            </span>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Product Form View -->
+    <record id="view_wms_product_form" model="ir.ui.view">
+        <field name="name">wms.product.form</field>
+        <field name="model">wms.product</field>
+        <field name="arch" type="xml">
+            <form string="Product">
+                <sheet>
+                    <!-- Smart Buttons Box -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_movements" type="object" class="oe_stat_button" icon="fa-exchange">
+                            <field name="movement_count" string="Movements" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_receipts" type="object" class="oe_stat_button" icon="fa-arrow-circle-down">
+                            <field name="receipt_count" string="Receipts" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_transfers" type="object" class="oe_stat_button" icon="fa-random">
+                            <field name="transfer_count" string="Transfers" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_shipments" type="object" class="oe_stat_button" icon="fa-truck">
+                            <field name="shipment_count" string="Shipments" widget="statinfo"/>
+                        </button>
+                    </div>
+
+                    <!-- Low Stock Alert Banner -->
+                    <div class="alert alert-danger d-flex align-items-center mb-3" role="alert" invisible="not is_low_stock">
+                        <i class="fa fa-exclamation-triangle fa-2x me-3"></i>
+                        <div>
+                            <strong>Low Stock Alert!</strong> Current on-hand quantity is below the required safety threshold (<field name="minimum_stock"/> <field name="unit_of_measure"/>). Replenishment is required.
+                        </div>
+                    </div>
+
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+
+                    <div class="oe_title">
+                        <label for="name" string="Product Name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Laptop Lenovo ThinkPad"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Identification &amp; Categorization">
+                            <field name="sku" placeholder="e.g. SKU-LAP-001"/>
+                            <field name="barcode" placeholder="e.g. 5901234567890"/>
+                            <field name="category"/>
+                            <field name="unit_of_measure"/>
+                        </group>
+                        <group string="Inventory &amp; Stock Levels">
+                            <field name="stock_quantity" class="fs-4 fw-bold text-primary"/>
+                            <field name="minimum_stock"/>
+                            <field name="maximum_stock"/>
+                            <field name="is_low_stock" invisible="1"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+
+                    <group string="Logistics &amp; Dimensions">
+                        <group>
+                            <field name="weight"/>
+                        </group>
+                        <group>
+                            <field name="volume"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Description &amp; Specifications" name="description">
+                            <field name="description" placeholder="Technical specifications, packaging notes, storage guidelines..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- Chatter -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Product Search View -->
+    <record id="view_wms_product_search" model="ir.ui.view">
+        <field name="name">wms.product.search</field>
+        <field name="model">wms.product</field>
+        <field name="arch" type="xml">
+            <search string="Search Products">
+                <field name="name"/>
+                <field name="sku"/>
+                <field name="barcode"/>
+                <field name="category"/>
+                <separator/>
+                <filter string="Low Stock Warning" name="low_stock" domain="[('is_low_stock', '=', True)]"/>
+                <separator/>
+                <filter string="Active" name="active" domain="[('active', '=', True)]"/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Category" name="group_category" context="{'group_by': 'category'}"/>
+                    <filter string="Unit of Measure" name="group_uom" context="{'group_by': 'unit_of_measure'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Product Action Window -->
+    <record id="action_wms_product" model="ir.actions.act_window">
+        <field name="name">Products</field>
+        <field name="res_model">wms.product</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="search_view_id" ref="view_wms_product_search"/>
+        <field name="context">{'search_default_active': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Add your first product to the WMS!
+            </p>
+            <p>
+                Products are tracked across all warehouse zones, with real-time stock levels and automated low-stock triggers.
+            </p>
+        </field>
+    </record>
+</odoo>

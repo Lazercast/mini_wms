@@ -29,6 +29,16 @@ Key Features:
     ],
     "data": [
         "data/ir_sequence_data.xml",
+        "views/warehouse_views.xml",
+        "views/location_views.xml",
+        "views/product_views.xml",
+        "views/stock_receipt_views.xml",
+        "views/stock_transfer_views.xml",
+        "views/stock_shipment_views.xml",
+        "views/stock_movement_views.xml",
+        "views/inventory_adjustment_views.xml",
+        "views/dashboard_views.xml",
+        "views/menu_views.xml",
     ],
     "demo": [
         # Demo data will be registered in Stage 12

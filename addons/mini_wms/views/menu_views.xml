@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Top-Level Root Menu: WMS -->
+    <menuitem id="menu_wms_root"
+              name="WMS"
+              web_icon="mini_wms,static/description/icon.png"
+              sequence="10"/>
+
+    <!-- 1. Dashboard Menu -->
+    <menuitem id="menu_wms_dashboard"
+              name="Dashboard"
+              parent="menu_wms_root"
+              action="action_wms_dashboard"
+              sequence="10"/>
+
+    <!-- 2. Warehouses Menu -->
+    <menuitem id="menu_wms_warehouses"
+              name="Warehouses"
+              parent="menu_wms_root"
+              action="action_wms_warehouse"
+              sequence="20"/>
+
+    <!-- 3. Locations Menu -->
+    <menuitem id="menu_wms_locations"
+              name="Locations"
+              parent="menu_wms_root"
+              action="action_wms_location"
+              sequence="30"/>
+
+    <!-- 4. Products Menu -->
+    <menuitem id="menu_wms_products"
+              name="Products"
+              parent="menu_wms_root"
+              action="action_wms_product"
+              sequence="40"/>
+
+    <!-- 5. Operations Parent Menu -->
+    <menuitem id="menu_wms_operations"
+              name="Operations"
+              parent="menu_wms_root"
+              sequence="50"/>
+
+    <!-- Operations Sub-menus -->
+    <menuitem id="menu_wms_receipts"
+              name="Receipts"
+              parent="menu_wms_operations"
+              action="action_wms_stock_receipt"
+              sequence="10"/>
+
+    <menuitem id="menu_wms_transfers"
+              name="Transfers"
+              parent="menu_wms_operations"
+              action="action_wms_stock_transfer"
+              sequence="20"/>
+
+    <menuitem id="menu_wms_shipments"
+              name="Shipments"
+              parent="menu_wms_operations"
+              action="action_wms_stock_shipment"
+              sequence="30"/>
+
+    <menuitem id="menu_wms_inventory_adjustments"
+              name="Inventory Adjustments"
+              parent="menu_wms_operations"
+              action="action_wms_inventory_adjustment"
+              sequence="40"/>
+
+    <!-- 6. Reports Parent Menu -->
+    <menuitem id="menu_wms_reports"
+              name="Reports"
+              parent="menu_wms_root"
+              sequence="60"/>
+
+    <!-- Reports Sub-menus -->
+    <menuitem id="menu_wms_stock_movements_report"
+              name="Stock Movements"
+              parent="menu_wms_reports"
+              action="action_wms_stock_movement"
+              sequence="10"/>
+</odoo>

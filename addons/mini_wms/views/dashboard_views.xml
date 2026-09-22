@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Filtered Actions for Dashboard Shortcuts -->
+    <record id="action_dashboard_low_stock" model="ir.actions.act_window">
+        <field name="name">Low Stock Products Requiring Replenishment</field>
+        <field name="res_model">wms.product</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="domain">[('is_low_stock', '=', True)]</field>
+        <field name="context">{'search_default_low_stock': 1}</field>
+    </record>
+
+    <record id="action_dashboard_pending_receipts" model="ir.actions.act_window">
+        <field name="name">Pending Receipts (To Receive)</field>
+        <field name="res_model">wms.stock.receipt</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', 'in', ['draft', 'confirmed'])]</field>
+    </record>
+
+    <record id="action_dashboard_pending_transfers" model="ir.actions.act_window">
+        <field name="name">Pending Transfers (To Move)</field>
+        <field name="res_model">wms.stock.transfer</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', 'in', ['draft', 'confirmed'])]</field>
+    </record>
+
+    <record id="action_dashboard_pending_shipments" model="ir.actions.act_window">
+        <field name="name">Pending Shipments (To Dispatch)</field>
+        <field name="res_model">wms.stock.shipment</field>
+        <field name="view_mode">list,form</field>
+        <field name="domain">[('state', 'in', ['draft', 'confirmed'])]</field>
+    </record>
+
+    <!-- Main Warehouse Dashboard Kanban Action -->
+    <record id="action_wms_dashboard" model="ir.actions.act_window">
+        <field name="name">WMS Logistics Dashboard</field>
+        <field name="res_model">wms.warehouse</field>
+        <field name="view_mode">kanban,list,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Welcome to Mini WMS!
+            </p>
+            <p>
+                Manage your warehouses, monitor live stock levels, and coordinate receipts, transfers, and shipments.
+            </p>
+        </field>
+    </record>
+</odoo>

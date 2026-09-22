@@ -94,3 +94,80 @@ class WmsWarehouse(models.Model):
                 warehouse.product_count = count
             else:
                 warehouse.product_count = 0
+
+    location_count = fields.Integer(
+        string="Location Count",
+        compute="_compute_counts",
+    )
+    receipt_count = fields.Integer(
+        string="Receipt Count",
+        compute="_compute_counts",
+    )
+    transfer_count = fields.Integer(
+        string="Transfer Count",
+        compute="_compute_counts",
+    )
+    shipment_count = fields.Integer(
+        string="Shipment Count",
+        compute="_compute_counts",
+    )
+
+    def _compute_counts(self):
+        for wh in self:
+            wh.location_count = self.env["wms.location"].search_count([("warehouse_id", "=", wh.id)])
+            wh.receipt_count = self.env["wms.stock.receipt"].search_count([("warehouse_id", "=", wh.id)])
+            wh.transfer_count = self.env["wms.stock.transfer"].search_count([("warehouse_id", "=", wh.id)])
+            wh.shipment_count = self.env["wms.stock.shipment"].search_count([("warehouse_id", "=", wh.id)])
+
+    def action_view_locations(self):
+        self.ensure_one()
+        return {
+            "name": _("Locations"),
+            "type": "ir.actions.act_window",
+            "res_model": "wms.location",
+            "view_mode": "list,form",
+            "domain": [("warehouse_id", "=", self.id)],
+            "context": {"default_warehouse_id": self.id},
+        }
+
+    def action_view_products(self):
+        self.ensure_one()
+        return {
+            "name": _("Products"),
+            "type": "ir.actions.act_window",
+            "res_model": "wms.product",
+            "view_mode": "kanban,list,form",
+        }
+
+    def action_view_receipts(self):
+        self.ensure_one()
+        return {
+            "name": _("Receipts"),
+            "type": "ir.actions.act_window",
+            "res_model": "wms.stock.receipt",
+            "view_mode": "list,form",
+            "domain": [("warehouse_id", "=", self.id)],
+            "context": {"default_warehouse_id": self.id},
+        }
+
+    def action_view_transfers(self):
+        self.ensure_one()
+        return {
+            "name": _("Transfers"),
+            "type": "ir.actions.act_window",
+            "res_model": "wms.stock.transfer",
+            "view_mode": "list,form",
+            "domain": [("warehouse_id", "=", self.id)],
+            "context": {"default_warehouse_id": self.id},
+        }
+
+    def action_view_shipments(self):
+        self.ensure_one()
+        return {
+            "name": _("Shipments"),
+            "type": "ir.actions.act_window",
+            "res_model": "wms.stock.shipment",
+            "view_mode": "list,form",
+            "domain": [("warehouse_id", "=", self.id)],
+            "context": {"default_warehouse_id": self.id},
+        }

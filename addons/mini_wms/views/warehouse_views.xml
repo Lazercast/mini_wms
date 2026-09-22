@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Warehouse List View -->
+    <record id="view_wms_warehouse_list" model="ir.ui.view">
+        <field name="name">wms.warehouse.list</field>
+        <field name="model">wms.warehouse</field>
+        <field name="arch" type="xml">
+            <list string="Warehouses" sample="1">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="manager_id"/>
+                <field name="product_count" string="Items in Stock"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Warehouse Kanban View (Dashboard Card) -->
+    <record id="view_wms_warehouse_kanban" model="ir.ui.view">
+        <field name="name">wms.warehouse.kanban</field>
+        <field name="model">wms.warehouse</field>
+        <field name="arch" type="xml">
+            <kanban sample="1">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="manager_id"/>
+                <field name="product_count"/>
+                <field name="receipt_count"/>
+                <field name="transfer_count"/>
+                <field name="shipment_count"/>
+                <templates>
+                    <t t-name="card">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong class="o_kanban_record_title fs-4"><field name="name"/></strong>
+                            <span class="badge text-bg-primary fs-6"><field name="code"/></span>
+                        </div>
+                        <div class="text-muted mb-3">
+                            <i class="fa fa-user me-1"/> Manager: <field name="manager_id"/>
+                        </div>
+                        <div class="row g-2 text-center">
+                            <div class="col-4">
+                                <a type="object" name="action_view_receipts" class="btn btn-sm btn-outline-success w-100 p-2">
+                                    <div class="fw-bold fs-5"><field name="receipt_count"/></div>
+                                    <div class="small">Receipts</div>
+                                </a>
+                            </div>
+                            <div class="col-4">
+                                <a type="object" name="action_view_transfers" class="btn btn-sm btn-outline-info w-100 p-2">
+                                    <div class="fw-bold fs-5"><field name="transfer_count"/></div>
+                                    <div class="small">Transfers</div>
+                                </a>
+                            </div>
+                            <div class="col-4">
+                                <a type="object" name="action_view_shipments" class="btn btn-sm btn-outline-primary w-100 p-2">
+                                    <div class="fw-bold fs-5"><field name="shipment_count"/></div>
+                                    <div class="small">Shipments</div>
+                                </a>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <!-- Warehouse Form View -->
+    <record id="view_wms_warehouse_form" model="ir.ui.view">
+        <field name="name">wms.warehouse.form</field>
+        <field name="model">wms.warehouse</field>
+        <field name="arch" type="xml">
+            <form string="Warehouse">
+                <sheet>
+                    <!-- Smart Buttons Box -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_products" type="object" class="oe_stat_button" icon="fa-cubes">
+                            <field name="product_count" string="In Stock" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_locations" type="object" class="oe_stat_button" icon="fa-th-large">
+                            <field name="location_count" string="Locations" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_receipts" type="object" class="oe_stat_button" icon="fa-arrow-circle-down">
+                            <field name="receipt_count" string="Receipts" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_transfers" type="object" class="oe_stat_button" icon="fa-random">
+                            <field name="transfer_count" string="Transfers" widget="statinfo"/>
+                        </button>
+                        <button name="action_view_shipments" type="object" class="oe_stat_button" icon="fa-truck">
+                            <field name="shipment_count" string="Shipments" widget="statinfo"/>
+                        </button>
+                    </div>
+
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+
+                    <div class="oe_title">
+                        <label for="name" string="Warehouse Name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Central Logistics Hub"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="code" placeholder="e.g. WH-MAIN"/>
+                            <field name="manager_id"/>
+                        </group>
+                        <group>
+                            <field name="active" widget="boolean_toggle"/>
+                            <field name="address" placeholder="Facility address, city, zip..."/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Locations &amp; Layout" name="locations">
+                            <field name="location_ids" readonly="1">
+                                <list>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="location_type"/>
+                                    <field name="parent_location_id"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                        <page string="Notes" name="notes">
+                            <field name="notes" placeholder="Warehouse layout specs, operational hours, security policies..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- Chatter integration -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Warehouse Search View -->
+    <record id="view_wms_warehouse_search" model="ir.ui.view">
+        <field name="name">wms.warehouse.search</field>
+        <field name="model">wms.warehouse</field>
+        <field name="arch" type="xml">
+            <search string="Search Warehouses">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="manager_id"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Manager" name="group_manager" context="{'group_by': 'manager_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Warehouse Action Window -->
+    <record id="action_wms_warehouse" model="ir.actions.act_window">
+        <field name="name">Warehouses</field>
+        <field name="res_model">wms.warehouse</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_wms_warehouse_search"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Register your first Warehouse!
+            </p>
+            <p>
+                Warehouses represent your company's physical storage facilities and logistics centers.
+            </p>
+        </field>
+    </record>
+</odoo>

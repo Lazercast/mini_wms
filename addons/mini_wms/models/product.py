@@ -231,3 +231,71 @@ class WmsProduct(models.Model):
                         ),
                         user_id=self.env.user.id,
                     )
+
+    movement_count = fields.Integer(
+        string="Movements Count",
+        compute="_compute_product_operation_counts",
+    )
+    receipt_count = fields.Integer(
+        string="Receipt Count",
+        compute="_compute_product_operation_counts",
+    )
+    transfer_count = fields.Integer(
+        string="Transfer Count",
+        compute="_compute_product_operation_counts",
+    )
+    shipment_count = fields.Integer(
+        string="Shipment Count",
+        compute="_compute_product_operation_counts",
+    )
+
+    def _compute_product_operation_counts(self):
+        for prod in self:
+            prod.movement_count = self.env["wms.stock.movement"].search_count([("product_id", "=", prod.id)])
+            prod.receipt_count = self.env["wms.stock.receipt.line"].search_count([("product_id", "=", prod.id)])
+            prod.transfer_count = self.env["wms.stock.transfer.line"].search_count([("product_id", "=", prod.id)])
+            prod.shipment_count = self.env["wms.stock.shipment.line"].search_count([("product_id", "=", prod.id)])
+
+    def action_view_movements(self):
+        self.ensure_one()
+        return {
+            "name": _("Stock Movements: %s", self.name),
+            "type": "ir.actions.act_window",
+            "res_model": "wms.stock.movement",
+            "view_mode": "list,form",
+            "domain": [("product_id", "=", self.id)],
+            "context": {"default_product_id": self.id},
+        }
+
+    def action_view_receipts(self):
+        self.ensure_one()
+        receipt_ids = self.env["wms.stock.receipt.line"].search([("product_id", "=", self.id)]).mapped("receipt_id").ids
+        return {
+            "name": _("Receipts for %s", self.name),
+            "type": "ir.actions.act_window",
+            "res_model": "wms.stock.receipt",
+            "view_mode": "list,form",
+            "domain": [("id", "in", receipt_ids)],
+        }
+
+    def action_view_transfers(self):
+        self.ensure_one()
+        transfer_ids = self.env["wms.stock.transfer.line"].search([("product_id", "=", self.id)]).mapped("transfer_id").ids
+        return {
+            "name": _("Transfers for %s", self.name),
+            "type": "ir.actions.act_window",
+            "res_model": "wms.stock.transfer",
+            "view_mode": "list,form",
+            "domain": [("id", "in", transfer_ids)],
+        }
+
+    def action_view_shipments(self):
+        self.ensure_one()
+        shipment_ids = self.env["wms.stock.shipment.line"].search([("product_id", "=", self.id)]).mapped("shipment_id").ids
+        return {
+            "name": _("Shipments for %s", self.name),
+            "type": "ir.actions.act_window",
+            "res_model": "wms.stock.shipment",
+            "view_mode": "list,form",
+            "domain": [("id", "in", shipment_ids)],
+        }

@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Location List View -->
+    <record id="view_wms_location_list" model="ir.ui.view">
+        <field name="name">wms.location.list</field>
+        <field name="model">wms.location</field>
+        <field name="arch" type="xml">
+            <list string="Warehouse Locations" sample="1">
+                <field name="complete_name"/>
+                <field name="code"/>
+                <field name="warehouse_id"/>
+                <field name="location_type" widget="badge"
+                       decoration-info="location_type == 'storage'"
+                       decoration-success="location_type == 'receiving'"
+                       decoration-primary="location_type == 'shipping'"
+                       decoration-warning="location_type == 'damaged'"
+                       decoration-muted="location_type == 'inventory'"/>
+                <field name="active" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Location Form View -->
+    <record id="view_wms_location_form" model="ir.ui.view">
+        <field name="name">wms.location.form</field>
+        <field name="model">wms.location</field>
+        <field name="arch" type="xml">
+            <form string="Location">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
+                    <div class="oe_title">
+                        <label for="name" string="Location Name"/>
+                        <h1>
+                            <field name="name" placeholder="e.g. Bin A-01, Row 2..."/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group>
+                            <field name="code" placeholder="e.g. A-01"/>
+                            <field name="warehouse_id"/>
+                            <field name="location_type"/>
+                        </group>
+                        <group>
+                            <field name="parent_location_id"/>
+                            <field name="complete_name" readonly="1"/>
+                            <field name="active" widget="boolean_toggle"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Sub-Locations (Hierarchy)" name="sub_locations">
+                            <field name="child_location_ids" readonly="1">
+                                <list>
+                                    <field name="code"/>
+                                    <field name="name"/>
+                                    <field name="location_type"/>
+                                    <field name="active"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Location Search View -->
+    <record id="view_wms_location_search" model="ir.ui.view">
+        <field name="name">wms.location.search</field>
+        <field name="model">wms.location</field>
+        <field name="arch" type="xml">
+            <search string="Search Locations">
+                <field name="name"/>
+                <field name="code"/>
+                <field name="warehouse_id"/>
+                <field name="complete_name"/>
+                <separator/>
+                <filter string="Storage Zones" name="storage" domain="[('location_type', '=', 'storage')]"/>
+                <filter string="Receiving Areas" name="receiving" domain="[('location_type', '=', 'receiving')]"/>
+                <filter string="Shipping Areas" name="shipping" domain="[('location_type', '=', 'shipping')]"/>
+                <filter string="Damaged / Quarantine" name="damaged" domain="[('location_type', '=', 'damaged')]"/>
+                <separator/>
+                <filter string="Archived" name="inactive" domain="[('active', '=', False)]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Warehouse" name="group_warehouse" context="{'group_by': 'warehouse_id'}"/>
+                    <filter string="Location Type" name="group_type" context="{'group_by': 'location_type'}"/>
+                    <filter string="Parent Zone" name="group_parent" context="{'group_by': 'parent_location_id'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Location Action Window -->
+    <record id="action_wms_location" model="ir.actions.act_window">
+        <field name="name">Locations</field>
+        <field name="res_model">wms.location</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_wms_location_search"/>
+        <field name="context">{'search_default_group_warehouse': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Define your warehouse zones and bins!
+            </p>
+            <p>
+                Create hierarchical structures (Warehouse ➔ Zone ➔ Rack ➔ Bin) to track items with precision.
+            </p>
+        </field>
+    </record>
+</odoo>

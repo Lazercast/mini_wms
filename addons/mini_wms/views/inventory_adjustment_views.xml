@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inventory Adjustment List View -->
+    <record id="view_wms_inventory_adjustment_list" model="ir.ui.view">
+        <field name="name">wms.inventory.adjustment.list</field>
+        <field name="model">wms.inventory.adjustment</field>
+        <field name="arch" type="xml">
+            <list string="Inventory Adjustments" sample="1">
+                <field name="name"/>
+                <field name="date"/>
+                <field name="warehouse_id"/>
+                <field name="location_id"/>
+                <field name="product_id"/>
+                <field name="system_quantity"/>
+                <field name="actual_quantity"/>
+                <field name="difference_quantity" decoration-danger="difference_quantity &lt; 0"
+                       decoration-success="difference_quantity &gt; 0"/>
+                <field name="reason"/>
+                <field name="responsible_user_id" widget="many2one_avatar_user"/>
+                <field name="state" widget="badge"
+                       decoration-success="state == 'applied'"
+                       decoration-warning="state == 'draft'"
+                       decoration-muted="state == 'cancelled'"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Inventory Adjustment Form View -->
+    <record id="view_wms_inventory_adjustment_form" model="ir.ui.view">
+        <field name="name">wms.inventory.adjustment.form</field>
+        <field name="model">wms.inventory.adjustment</field>
+        <field name="arch" type="xml">
+            <form string="Inventory Adjustment">
+                <header>
+                    <button name="action_apply" string="Apply Adjustment" type="object"
+                            class="btn-primary" invisible="state != 'draft'"/>
+                    <button name="action_cancel" string="Cancel" type="object"
+                            invisible="state in ('applied', 'cancelled')"/>
+                    <button name="action_draft" string="Reset to Draft" type="object"
+                            invisible="state != 'cancelled'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,applied"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Adjustment Reference"/>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+
+                    <group>
+                        <group string="Location &amp; Item">
+                            <field name="warehouse_id" readonly="state == 'applied'"/>
+                            <field name="location_id" readonly="state == 'applied'"/>
+                            <field name="product_id" readonly="state == 'applied'"/>
+                        </group>
+                        <group string="Quantities &amp; Discrepancy">
+                            <field name="system_quantity" readonly="state == 'applied'"/>
+                            <field name="actual_quantity" readonly="state == 'applied'"/>
+                            <field name="difference_quantity" readonly="1" class="fw-bold fs-4"
+                                   decoration-danger="difference_quantity &lt; 0"
+                                   decoration-success="difference_quantity &gt; 0"/>
+                        </group>
+                    </group>
+
+                    <group string="Audit &amp; Justification">
+                        <group>
+                            <field name="reason" placeholder="e.g. Broken in transit, Annual inventory recount..."
+                                   readonly="state == 'applied'"/>
+                        </group>
+                        <group>
+                            <field name="date" readonly="state == 'applied'"/>
+                            <field name="responsible_user_id" readonly="state == 'applied'"/>
+                        </group>
+                    </group>
+
+                    <notebook>
+                        <page string="Detailed Audit Notes" name="notes">
+                            <field name="notes" placeholder="Additional audit notes, supervisor approval comments..."/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+                <!-- Chatter -->
+                <chatter/>
+            </form>
+        </field>
+    </record>
+
+    <!-- Inventory Adjustment Search View -->
+    <record id="view_wms_inventory_adjustment_search" model="ir.ui.view">
+        <field name="name">wms.inventory.adjustment.search</field>
+        <field name="model">wms.inventory.adjustment</field>
+        <field name="arch" type="xml">
+            <search string="Search Adjustments">
+                <field name="name"/>
+                <field name="warehouse_id"/>
+                <field name="location_id"/>
+                <field name="product_id"/>
+                <field name="reason"/>
+                <separator/>
+                <filter string="Draft" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Applied" name="applied" domain="[('state', '=', 'applied')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Warehouse" name="group_warehouse" context="{'group_by': 'warehouse_id'}"/>
+                    <filter string="Location" name="group_location" context="{'group_by': 'location_id'}"/>
+                    <filter string="Product" name="group_product" context="{'group_by': 'product_id'}"/>
+                    <filter string="Status" name="group_state" context="{'group_by': 'state'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Inventory Adjustment Action Window -->
+    <record id="action_wms_inventory_adjustment" model="ir.actions.act_window">
+        <field name="name">Inventory Adjustments</field>
+        <field name="res_model">wms.inventory.adjustment</field>
+        <field name="view_mode">list,form</field>
+        <field name="search_view_id" ref="view_wms_inventory_adjustment_search"/>
+        <field name="context">{'search_default_draft': 1}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Record an inventory recount or discrepancy!
+            </p>
+            <p>
+                Adjustments bring recorded system quantities in line with physical counts and log auditing entries.
+            </p>
+        </field>
+    </record>
+</odoo>
