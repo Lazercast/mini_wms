@@ -28,7 +28,7 @@ Key Features:
         "mail",
     ],
     "data": [
-        # Data and views will be registered in subsequent stages
+        "data/ir_sequence_data.xml",
     ],
     "demo": [
         # Demo data will be registered in Stage 12
