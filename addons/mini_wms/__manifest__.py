@@ -43,7 +43,7 @@ Key Features:
         "views/menu_views.xml",
     ],
     "demo": [
-        # Demo data will be registered in Stage 12
+        "demo/demo_data.xml",
     ],
     "installable": True,
     "application": True,

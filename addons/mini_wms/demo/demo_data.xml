@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- ======================================================== -->
+        <!-- 1. Warehouses                                            -->
+        <!-- ======================================================== -->
+        <record id="warehouse_main" model="wms.warehouse">
+            <field name="name">Main Logistics Hub</field>
+            <field name="code">WH-MAIN</field>
+            <field name="address">123 Central Industrial Zone, Almaty, Kazakhstan</field>
+            <field name="notes">Central distribution facility with receiving docks and multi-tier racking.</field>
+        </record>
+
+        <record id="warehouse_astana" model="wms.warehouse">
+            <field name="name">Astana Regional Center</field>
+            <field name="code">WH-AST</field>
+            <field name="address">45 Mangilik El Avenue, Astana, Kazakhstan</field>
+            <field name="notes">Regional distribution and fulfillment hub for northern regions.</field>
+        </record>
+
+        <!-- ======================================================== -->
+        <!-- 2. Locations (Main Warehouse)                            -->
+        <!-- ======================================================== -->
+        <record id="loc_main_receiving" model="wms.location">
+            <field name="name">Receiving Area</field>
+            <field name="code">REC</field>
+            <field name="warehouse_id" ref="warehouse_main"/>
+            <field name="location_type">receiving</field>
+        </record>
+
+        <record id="loc_main_storage_a" model="wms.location">
+            <field name="name">Storage Zone A</field>
+            <field name="code">STO-A</field>
+            <field name="warehouse_id" ref="warehouse_main"/>
+            <field name="location_type">storage</field>
+        </record>
+
+        <record id="loc_main_storage_a_01" model="wms.location">
+            <field name="name">Rack A-01</field>
+            <field name="code">A-01</field>
+            <field name="warehouse_id" ref="warehouse_main"/>
+            <field name="parent_location_id" ref="loc_main_storage_a"/>
+            <field name="location_type">storage</field>
+        </record>
+
+        <record id="loc_main_storage_a_02" model="wms.location">
+            <field name="name">Rack A-02</field>
+            <field name="code">A-02</field>
+            <field name="warehouse_id" ref="warehouse_main"/>
+            <field name="parent_location_id" ref="loc_main_storage_a"/>
+            <field name="location_type">storage</field>
+        </record>
+
+        <record id="loc_main_storage_b" model="wms.location">
+            <field name="name">Storage Zone B</field>
+            <field name="code">STO-B</field>
+            <field name="warehouse_id" ref="warehouse_main"/>
+            <field name="location_type">storage</field>
+        </record>
+
+        <record id="loc_main_storage_b_01" model="wms.location">
+            <field name="name">Bin B-01</field>
+            <field name="code">B-01</field>
+            <field name="warehouse_id" ref="warehouse_main"/>
+            <field name="parent_location_id" ref="loc_main_storage_b"/>
+            <field name="location_type">storage</field>
+        </record>
+
+        <record id="loc_main_shipping" model="wms.location">
+            <field name="name">Shipping Lane 1</field>
+            <field name="code">SHIP-01</field>
+            <field name="warehouse_id" ref="warehouse_main"/>
+            <field name="location_type">shipping</field>
+        </record>
+
+        <!-- Locations (Astana Warehouse) -->
+        <record id="loc_ast_receiving" model="wms.location">
+            <field name="name">Receiving Bay</field>
+            <field name="code">REC</field>
+            <field name="warehouse_id" ref="warehouse_astana"/>
+            <field name="location_type">receiving</field>
+        </record>
+
+        <record id="loc_ast_storage" model="wms.location">
+            <field name="name">General Storage</field>
+            <field name="code">STO</field>
+            <field name="warehouse_id" ref="warehouse_astana"/>
+            <field name="location_type">storage</field>
+        </record>
+
+        <record id="loc_ast_shipping" model="wms.location">
+            <field name="name">Outbound Staging</field>
+            <field name="code">SHIP</field>
+            <field name="warehouse_id" ref="warehouse_astana"/>
+            <field name="location_type">shipping</field>
+        </record>
+
+        <!-- ======================================================== -->
+        <!-- 3. Products                                              -->
+        <!-- ======================================================== -->
+        <record id="product_laptop" model="wms.product">
+            <field name="name">Laptop Lenovo ThinkPad T14 Gen 4</field>
+            <field name="sku">SKU-LAP-001</field>
+            <field name="barcode">7612345678901</field>
+            <field name="category">electronics</field>
+            <field name="unit_of_measure">units</field>
+            <field name="minimum_stock">5.0</field>
+            <field name="maximum_stock">50.0</field>
+            <field name="weight">1.45</field>
+            <field name="volume">0.005</field>
+            <field name="description">Intel Core i7, 32GB RAM, 1TB SSD, 14-inch IPS display.</field>
+        </record>
+
+        <record id="product_monitor" model="wms.product">
+            <field name="name">Monitor Samsung ViewFinity 27" 4K</field>
+            <field name="sku">SKU-MON-002</field>
+            <field name="barcode">7612345678902</field>
+            <field name="category">peripherals</field>
+            <field name="unit_of_measure">units</field>
+            <field name="minimum_stock">4.0</field>
+            <field name="maximum_stock">30.0</field>
+            <field name="weight">4.80</field>
+            <field name="volume">0.025</field>
+            <field name="description">IPS 3840x2160 UHD panel, USB-C 90W PD, HDR10.</field>
+        </record>
+
+        <record id="product_keyboard" model="wms.product">
+            <field name="name">Keyboard Logitech MX Keys S</field>
+            <field name="sku">SKU-KEY-003</field>
+            <field name="barcode">7612345678903</field>
+            <field name="category">peripherals</field>
+            <field name="unit_of_measure">units</field>
+            <field name="minimum_stock">10.0</field>
+            <field name="maximum_stock">100.0</field>
+            <field name="weight">0.81</field>
+            <field name="volume">0.002</field>
+            <field name="description">Wireless illuminated tactile keyboard with Bluetooth / Logi Bolt.</field>
+        </record>
+
+        <record id="product_mouse" model="wms.product">
+            <field name="name">Mouse Logitech MX Master 3S</field>
+            <field name="sku">SKU-MOU-004</field>
+            <field name="barcode">7612345678904</field>
+            <field name="category">peripherals</field>
+            <field name="unit_of_measure">units</field>
+            <field name="minimum_stock">10.0</field>
+            <field name="maximum_stock">100.0</field>
+            <field name="weight">0.14</field>
+            <field name="volume">0.001</field>
+            <field name="description">Ergonomic quiet click mouse, 8000 DPI sensor, MagSpeed scroll.</field>
+        </record>
+
+        <record id="product_switch" model="wms.product">
+            <field name="name">Network Switch Cisco Catalyst 1000 24P</field>
+            <field name="sku">SKU-SW-005</field>
+            <field name="barcode">7612345678905</field>
+            <field name="category">networking</field>
+            <field name="unit_of_measure">units</field>
+            <field name="minimum_stock">2.0</field>
+            <field name="maximum_stock">15.0</field>
+            <field name="weight">3.75</field>
+            <field name="volume">0.015</field>
+            <field name="description">Managed 24 Gigabit Ethernet PoE+ ports, 4x 10G SFP+ uplinks.</field>
+        </record>
+
+        <!-- ======================================================== -->
+        <!-- 4. Initial Stock Receipts & Movement Records              -->
+        <!-- ======================================================== -->
+        <record id="demo_receipt_1" model="wms.stock.receipt">
+            <field name="name">REC00001</field>
+            <field name="warehouse_id" ref="warehouse_main"/>
+            <field name="source_supplier">Global IT Logistics B.V.</field>
+            <field name="state">received</field>
+            <field name="notes">Initial warehouse stocking shipment.</field>
+        </record>
+
+        <record id="demo_receipt_1_line_1" model="wms.stock.receipt.line">
+            <field name="receipt_id" ref="demo_receipt_1"/>
+            <field name="product_id" ref="product_laptop"/>
+            <field name="quantity">20.0</field>
+            <field name="destination_location_id" ref="loc_main_receiving"/>
+            <field name="unit_price">1250.0</field>
+        </record>
+
+        <record id="demo_receipt_1_line_2" model="wms.stock.receipt.line">
+            <field name="receipt_id" ref="demo_receipt_1"/>
+            <field name="product_id" ref="product_keyboard"/>
+            <field name="quantity">40.0</field>
+            <field name="destination_location_id" ref="loc_main_receiving"/>
+            <field name="unit_price">95.0</field>
+        </record>
+
+        <record id="demo_receipt_1_line_3" model="wms.stock.receipt.line">
+            <field name="receipt_id" ref="demo_receipt_1"/>
+            <field name="product_id" ref="product_mouse"/>
+            <field name="quantity">50.0</field>
+            <field name="destination_location_id" ref="loc_main_receiving"/>
+            <field name="unit_price">85.0</field>
+        </record>
+
+        <!-- Audit Movements for Receipt 1 -->
+        <record id="demo_move_rec_1" model="wms.stock.movement">
+            <field name="product_id" ref="product_laptop"/>
+            <field name="quantity">20.0</field>
+            <field name="source_location_id" eval="False"/>
+            <field name="destination_location_id" ref="loc_main_receiving"/>
+            <field name="operation_type">receipt</field>
+            <field name="reference">REC00001</field>
+        </record>
+
+        <record id="demo_move_rec_2" model="wms.stock.movement">
+            <field name="product_id" ref="product_keyboard"/>
+            <field name="quantity">40.0</field>
+            <field name="source_location_id" eval="False"/>
+            <field name="destination_location_id" ref="loc_main_receiving"/>
+            <field name="operation_type">receipt</field>
+            <field name="reference">REC00001</field>
+        </record>
+
+        <record id="demo_move_rec_3" model="wms.stock.movement">
+            <field name="product_id" ref="product_mouse"/>
+            <field name="quantity">50.0</field>
+            <field name="source_location_id" eval="False"/>
+            <field name="destination_location_id" ref="loc_main_receiving"/>
+            <field name="operation_type">receipt</field>
+            <field name="reference">REC00001</field>
+        </record>
+
+        <!-- ======================================================== -->
+        <!-- 5. Internal Transfer: Receiving -> Rack A-01              -->
+        <!-- ======================================================== -->
+        <record id="demo_transfer_1" model="wms.stock.transfer">
+            <field name="name">TR00001</field>
+            <field name="warehouse_id" ref="warehouse_main"/>
+            <field name="source_location_id" ref="loc_main_receiving"/>
+            <field name="destination_location_id" ref="loc_main_storage_a_01"/>
+            <field name="state">done</field>
+            <field name="notes">Putaway from receiving dock to Rack A-01.</field>
+        </record>
+
+        <record id="demo_transfer_1_line_1" model="wms.stock.transfer.line">
+            <field name="transfer_id" ref="demo_transfer_1"/>
+            <field name="product_id" ref="product_laptop"/>
+            <field name="quantity">15.0</field>
+        </record>
+
+        <!-- Audit Movement for Transfer 1 -->
+        <record id="demo_move_tr_1" model="wms.stock.movement">
+            <field name="product_id" ref="product_laptop"/>
+            <field name="quantity">15.0</field>
+            <field name="source_location_id" ref="loc_main_receiving"/>
+            <field name="destination_location_id" ref="loc_main_storage_a_01"/>
+            <field name="operation_type">transfer</field>
+            <field name="reference">TR00001</field>
+        </record>
+
+        <!-- ======================================================== -->
+        <!-- 6. Outbound Shipment: Rack A-01 -> Customer              -->
+        <!-- ======================================================== -->
+        <record id="demo_shipment_1" model="wms.stock.shipment">
+            <field name="name">SHIP00001</field>
+            <field name="warehouse_id" ref="warehouse_main"/>
+            <field name="customer">Astana IT University</field>
+            <field name="state">shipped</field>
+            <field name="notes">Order for computer science laboratory.</field>
+        </record>
+
+        <record id="demo_shipment_1_line_1" model="wms.stock.shipment.line">
+            <field name="shipment_id" ref="demo_shipment_1"/>
+            <field name="product_id" ref="product_laptop"/>
+            <field name="source_location_id" ref="loc_main_storage_a_01"/>
+            <field name="quantity">3.0</field>
+        </record>
+
+        <!-- Audit Movement for Shipment 1 -->
+        <record id="demo_move_ship_1" model="wms.stock.movement">
+            <field name="product_id" ref="product_laptop"/>
+            <field name="quantity">3.0</field>
+            <field name="source_location_id" ref="loc_main_storage_a_01"/>
+            <field name="destination_location_id" eval="False"/>
+            <field name="operation_type">shipment</field>
+            <field name="reference">SHIP00001</field>
+        </record>
+
+        <!-- ======================================================== -->
+        <!-- 7. Active Documents in Draft/Confirmed for UI Testing     -->
+        <!-- ======================================================== -->
+        <record id="demo_receipt_draft" model="wms.stock.receipt">
+            <field name="name">REC00002</field>
+            <field name="warehouse_id" ref="warehouse_astana"/>
+            <field name="source_supplier">Samsung Electronics Distribution</field>
+            <field name="state">confirmed</field>
+            <field name="notes">Monitors expected by courier today. Ready to click Receive Goods.</field>
+        </record>
+
+        <record id="demo_receipt_draft_line_1" model="wms.stock.receipt.line">
+            <field name="receipt_id" ref="demo_receipt_draft"/>
+            <field name="product_id" ref="product_monitor"/>
+            <field name="quantity">10.0</field>
+            <field name="destination_location_id" ref="loc_ast_receiving"/>
+            <field name="unit_price">420.0</field>
+        </record>
+
+        <record id="demo_transfer_draft" model="wms.stock.transfer">
+            <field name="name">TR00002</field>
+            <field name="warehouse_id" ref="warehouse_main"/>
+            <field name="source_location_id" ref="loc_main_receiving"/>
+            <field name="destination_location_id" ref="loc_main_storage_b_01"/>
+            <field name="state">confirmed</field>
+            <field name="notes">Transfer keyboards to Bin B-01. Ready to click Execute Transfer.</field>
+        </record>
+
+        <record id="demo_transfer_draft_line_1" model="wms.stock.transfer.line">
+            <field name="transfer_id" ref="demo_transfer_draft"/>
+            <field name="product_id" ref="product_keyboard"/>
+            <field name="quantity">20.0</field>
+        </record>
+    </data>
+</odoo>
