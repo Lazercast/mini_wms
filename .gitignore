@@ -1,0 +1,14 @@
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+.pytest_cache/
+.coverage
+htmlcov/
+*.log
+.env
+.idea/
+.vscode/
+odoo-data/
+postgres-data/
+scratch/
