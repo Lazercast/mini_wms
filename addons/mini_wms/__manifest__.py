@@ -28,6 +28,8 @@ Key Features:
         "mail",
     ],
     "data": [
+        "security/security.xml",
+        "security/ir.model.access.csv",
         "data/ir_sequence_data.xml",
         "views/warehouse_views.xml",
         "views/location_views.xml",

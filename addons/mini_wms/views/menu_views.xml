@@ -63,6 +63,7 @@
               name="Inventory Adjustments"
               parent="menu_wms_operations"
               action="action_wms_inventory_adjustment"
+              groups="mini_wms.group_wms_manager"
               sequence="40"/>
 
     <!-- 6. Reports Parent Menu -->

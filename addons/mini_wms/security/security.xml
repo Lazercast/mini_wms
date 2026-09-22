@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Module Category for WMS Permissions -->
+    <record id="module_category_wms" model="ir.module.category">
+        <field name="name">Warehouse Management (WMS)</field>
+        <field name="description">Access control roles for the Mini WMS application</field>
+        <field name="sequence">20</field>
+    </record>
+
+    <!-- Group: WMS User -->
+    <record id="group_wms_user" model="res.groups">
+        <field name="name">User (Clerk / Operator)</field>
+        <field name="category_id" ref="module_category_wms"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        <field name="comment">Standard warehouse operator: can view stock, create receipts, transfers, and shipments.</field>
+    </record>
+
+    <!-- Group: WMS Manager (Inherits WMS User) -->
+    <record id="group_wms_manager" model="res.groups">
+        <field name="name">Manager (Supervisor / Admin)</field>
+        <field name="category_id" ref="module_category_wms"/>
+        <field name="implied_ids" eval="[(4, ref('group_wms_user'))]"/>
+        <field name="comment">Warehouse supervisor: full management of warehouses, locations, inventory adjustments, cancellation and reports.</field>
+    </record>
+</odoo>
